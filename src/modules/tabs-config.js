@@ -1,5 +1,6 @@
 'use-strict'
 
+/*
 export function tabsConfiguration() {
   var tabs = {}
 
@@ -37,3 +38,4 @@ export function tabsConfiguration() {
     }
   }
 }
+*/

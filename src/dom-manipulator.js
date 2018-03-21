@@ -1,5 +1,6 @@
 'use strict'
 
+/*
 import Message from './modules/messages'
 import XObjMaster from './modules/xobj-master'
 
@@ -74,3 +75,4 @@ chrome.runtime.onMessage.addListener((message) => {
     console.log('Message of unknown type recived: ' + JSON.stringify(message))
   }
 })
+*/

@@ -3,41 +3,38 @@
 import { parseUrl } from './utils'
 
 const RuleStorage = {
-  ruleStoreContentPrototype: {
-    'domain:home': {
-      'extConfig': {
-        'perma': true,
-        'purify': false
-      },
+  //rules: loadFromStorage()
+  rules: {
+    'home': {
       'perma': {
-        'delete': [
-          { 'xpath': '/html/body/header/div/div/h1/a/img' }
-        ]
+        0: {
+          'name': 'Delete p1',
+          'operation': 'delete',
+          'xobj': { 'xpath': '/html/body/section[2]/div/div[1]' }
+        }
       },
-      'purify': {
-        'delete': [
-          { 'xpath': '/html/body/header/div/nav/ul' }
-        ]
-      }
-    },
-    'page:home/head/Development/purify/jekyll.htm': {
-      'perma': {
-        'delete': [
-          { 'xpath': '/html/body/section[1]/div/div/p' }
-        ]
-      }
+      'purif': {
+        'name': 'Delete Logo',
+        'operation': 'delete',
+        'xobj': { 'xpath': '/html/body/header' }
+      },
+      'config': { 'perma-on': true }
     }
   },
 
-  initStorage: function initStorage() {
-    chrome.storage.sync.set(RuleStorage.ruleStoreContentPrototype)
-  },
+  getRules: function getRules(url) {
+    let domain = parseUrl(url).domain
+    if (this.rules.hasOwnProperty(domain)) {
+      return this.rules[domain]
+    }
+    return {}
+  }
+}
 
-  clearStorage: function clearStorage(done) {
-    chrome.storage.sync.clear()
-    done()
-  },
+export default RuleStorage
 
+
+/*
   loadFromStorage: function loadFromStorage(key) {
     return new Promise((resolve) => {
       chrome.storage.sync.get(key, (response) => {
@@ -49,25 +46,22 @@ const RuleStorage = {
       })
     })
   },
+  initStorage: function initStorage() {
+    chrome.storage.sync.set(RuleStorage.rules)
+  },
 
-  mergeRules: function mergeRules(domainRules, urlRules) {
-    const merged = Object.assign({}, domainRules)
+  clearStorage: function clearStorage(done) {
+    chrome.storage.sync.clear()
+    done()
+  },
 
-    Object.keys(urlRules).forEach((key1) => {
-      if (merged.hasOwnProperty(key1)) {
-        Object.keys(urlRules[key1]).forEach((key2) => {
-          if (merged[key1].hasOwnProperty(key2)) {
-            merged[key1][key2] = merged[key1][key2].concat(urlRules[key1][key2])
-          } else {
-            merged[key1][key2] = urlRules[key1][key2]
-          }
-        })
-      } else {
-        merged[key1] = urlRules[key1]
-      }
-    })
 
-    return merged
+  isPermaOn: function isPermaOn(domain) {
+    return this.rules[domain].applyPerma
+  },
+
+  setPerma: function setPerma(domain, value) {
+    this.rules[domain].applyPerma = value
   },
 
   getRules: async function getRules(url) {
@@ -75,8 +69,7 @@ const RuleStorage = {
     const domainRules = this.loadFromStorage('domain:' + web.domain)
     const urlRules = this.loadFromStorage('page:' + web.page)
 
-    return this.mergeRules(await domainRules, await urlRules)
+    return {}
+    // return this.mergeRules(await domainRules, await urlRules)
   }
-}
-
-export default RuleStorage
+ */

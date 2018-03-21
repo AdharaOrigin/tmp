@@ -5,10 +5,8 @@ const messageFactory = {
     return Object.assign(Object.create(null), { type, args })
   },
   types: Object.freeze({
-    newPageLoading: 'newPageLoading',
-    initRules: 'initRules',
-    rulesInitialized: 'rulesInitialized',
-    extensionActive: 'extensionActive'
+    newPageLoading: 'newPageLoading'
+    // initRules: 'initRules'
   }),
   getType: function getType(message) {
     return message.type
