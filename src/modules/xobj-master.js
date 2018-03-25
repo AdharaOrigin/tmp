@@ -1,12 +1,10 @@
 'use strict'
 
-const xobjMaster = {
-  findElement: function findElement(xobj) {
+const ObjectMaster = {
+  findElement: function findElement(object) {
     // todo: implement voting matching
-    const htmlElement = document.evaluate(xobj.xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue
-
-    return { htmlElement: htmlElement }
+    return document.evaluate(object.xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue
   }
 }
 
-export default xobjMaster
+export default ObjectMaster

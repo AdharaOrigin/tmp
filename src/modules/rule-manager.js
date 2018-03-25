@@ -2,36 +2,42 @@
 
 import { parseUrl } from './utils'
 
-const RuleStorage = {
+const RuleManager = {
   //rules: loadFromStorage()
   rules: {
     'home': {
-      'perma': {
+      'cleanOn': true,
+      'cleanRules': {
         0: {
           'name': 'Delete p1',
           'operation': 'delete',
-          'xobj': { 'xpath': '/html/body/section[2]/div/div[1]' }
+          'obj': { 'xpath': '/html/body/section[2]/div/div[1]' }
         }
       },
-      'purif': {
-        'name': 'Delete Logo',
-        'operation': 'delete',
-        'xobj': { 'xpath': '/html/body/header' }
-      },
-      'config': { 'perma-on': true }
+      'purifyRules': {
+        1: {
+          'name': 'Delete Logo',
+          'operation': 'delete',
+          'obj': { 'xpath': '/html/body/header' }
+        }
+      }
     }
   },
 
-  getRules: function getRules(url) {
+  getRules(url) {
     let domain = parseUrl(url).domain
     if (this.rules.hasOwnProperty(domain)) {
       return this.rules[domain]
     }
     return {}
+  },
+
+  initStorage: function initStorage() {
+    chrome.storage.sync.set(RuleManager.rules)
   }
 }
 
-export default RuleStorage
+export default RuleManager
 
 
 /*

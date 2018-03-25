@@ -1,19 +1,24 @@
 'use strict'
 
-const messageFactory = {
-  create: function create(type, args = []) {
-    return Object.assign(Object.create(null), { type, args })
-  },
-  types: Object.freeze({
-    newPageLoading: 'newPageLoading'
-    // initRules: 'initRules'
-  }),
-  getType: function getType(message) {
-    return message.type
-  },
-  getArgs: function getArgs(message) {
-    return message.args
+const messagePrototype = {
+  getType: function getType() {
+    return this.type
   }
+}
+
+const messageFactory = {
+
+  create: {
+    getConfig: function getConfig(whip) {
+      return Object.assign(Object.create(null), {messagePrototype, whip})
+    }
+  },
+
+  types: Object.freeze({
+    getDomainRules: 'getDomainRules',
+    getConfig: 'getConfig',
+    updateConfig: 'updateConfig'
+  }),
 }
 
 export default messageFactory
