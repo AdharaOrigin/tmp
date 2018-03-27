@@ -48,7 +48,7 @@ chrome.runtime.onMessage.addListener((message) => {
 })
 
 
-const domManipulator = {
+const domManipulassator = {
   config: {
     'perma': false,
     'purify': false

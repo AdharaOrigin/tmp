@@ -7,7 +7,7 @@ module.exports = {
   entry: {
     'background': ['babel-polyfill', './src/background.js'],
     'content': ['babel-polyfill', './src/content.js'],
-    'dom-manipulator': './src/dom-manipulator.js',
+    // 'dom-manipulator': './src/dom-manipulator.js',
     'pages/popup': ['babel-polyfill', './src/pages/popup.js']
   },
   output: {

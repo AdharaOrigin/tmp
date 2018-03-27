@@ -1,16 +1,26 @@
 'use strict'
 
 import ObjectMaster from './modules/xobj-master'
+import DomProbe from './modules/dom-sniffer'
 
 function loadRules() {
   return new Promise(resolve => {
-    chrome.runtime.sendMessage({type: 'getDomainRules', domain: 'home'}, rules => {
-      resolve({
-        cleanModeOn: rules['cleanModeOn'],
-        readModeOn: false,
-        cleanRules: rules['cleanRules'],
-        readRules: rules['readRules']
-      })
+    chrome.runtime.sendMessage({type: 'getPageRules', url: location.href}, rules => {
+      if (Object.keys(rules).length === 0) {
+        resolve({
+          cleanModeOn: false,
+          readModeOn: false,
+          cleanRules: {},
+          readRules: {}
+        })
+      } else {
+        resolve({
+          cleanModeOn: rules['cleanModeOn'],
+          readModeOn: false,
+          cleanRules: rules['cleanRules'],
+          readRules: rules['readRules']
+        })
+      }
     })
   })
 }
@@ -35,7 +45,7 @@ const domManipulator = {
     chrome.runtime.onMessage.addListener((message) => {
       switch(message.type) {
         case "getConfig":
-          chrome.runtime.sendMessage(this.rules)
+          chrome.runtime.sendMessage({ 'type': 'setConfig', 'config': this.rules })
           break
 
         case "switchCleanMode":
@@ -45,10 +55,13 @@ const domManipulator = {
         case "switchReadMode":
           this.switchReadMode()
           break
+
+        default:
+          break
       }
     })
 
-    chrome.runtime.sendMessage(this.rules)
+    chrome.runtime.sendMessage({ 'type': 'setConfig', 'config': this.rules})
   },
 
   findHtmlElements: function findHtmlElements(rules) {
@@ -64,7 +77,7 @@ const domManipulator = {
     } else {
       this.removeRules('cleanRules')
     }
-    chrome.runtime.sendMessage(this.rules)
+    chrome.runtime.sendMessage({ 'type': 'setConfig', 'config': this.rules})
   },
 
   switchReadMode: function switchReadMode() {
@@ -74,7 +87,7 @@ const domManipulator = {
     } else {
       this.removeRules('readRules')
     }
-    chrome.runtime.sendMessage(this.rules)
+    chrome.runtime.sendMessage({ 'type': 'setConfig', 'config': this.rules})
   },
 
   applyRules: function applyRules(scope) {
@@ -102,3 +115,13 @@ const domManipulator = {
   },
 
 }.initRules()
+
+
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  switch(message.type) {
+    case "hideNewElement":
+      DomProbe.startProbing()
+      sendResponse()
+      break
+  }
+})

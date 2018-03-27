@@ -2,8 +2,10 @@
 
 import { parseUrl } from '../modules/utils'
 
-chrome.runtime.onMessage.addListener(config => {
-  configUpdate(config)
+chrome.runtime.onMessage.addListener(message => {
+  if (message.type === "setConfig") {
+    configUpdate(message.config)
+  }
 })
 sendMessage({type: "getConfig"})
 
@@ -25,9 +27,9 @@ function displayPanel() {
 }
 
 
-function sendMessage(message) {
+function sendMessage(message, callback) {
   getCurrentTab().then(tab => {
-    chrome.tabs.sendMessage(tab.id, message)
+    chrome.tabs.sendMessage(tab.id, message, callback)
   })
 }
 
@@ -44,6 +46,7 @@ function getCurrentTab() {
 document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('clean-mode-btn').addEventListener('click', switchCleanMode)
   document.getElementById('read-mode-btn').addEventListener('click', switchReadMode)
+  document.getElementById('sniffer-btn').addEventListener('click', hideNewElement)
 })
 
 function switchCleanMode() {
@@ -52,4 +55,10 @@ function switchCleanMode() {
 
 function switchReadMode() {
   sendMessage({type: "switchReadMode"})
+}
+
+function hideNewElement() {
+  sendMessage({type: "hideNewElement"}, () => {
+    window.close()
+  })
 }
