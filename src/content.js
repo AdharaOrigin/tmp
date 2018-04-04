@@ -2,6 +2,8 @@
 
 import ObjectMaster from './modules/xobj-master'
 import DomProbe from './modules/dom-sniffer'
+import RuleManager from './modules/rule-manager'
+import { parseUrl } from './modules/utils'
 
 function loadRules() {
   return new Promise(resolve => {
@@ -27,6 +29,7 @@ function loadRules() {
 
 
 const domManipulator = {
+  domain: parseUrl(location.href).domain,
   rules: undefined,
 
   initRules: async function initRules() {
@@ -40,7 +43,7 @@ const domManipulator = {
     this.findHtmlElements(this.rules['readRules'])
 
     if (this.rules.cleanModeOn)
-      this.applyRules('cleanRules')
+      this.applyRules(this.rules['cleanRules'])
 
     chrome.runtime.onMessage.addListener((message) => {
       switch(message.type) {
@@ -56,7 +59,13 @@ const domManipulator = {
           this.switchReadMode()
           break
 
-        default:
+        case "turnOnCleanMode":
+          if (!this.rules.cleanModeOn)
+            this.switchCleanMode()
+          break
+
+        case "deleteRule":
+          this.deleteRule(message.ruleType, message.id)
           break
       }
     })
@@ -73,55 +82,112 @@ const domManipulator = {
   switchCleanMode: function switchCleanMode() {
     this.rules.cleanModeOn = !this.rules.cleanModeOn
     if (this.rules.cleanModeOn) {
-      this.applyRules('cleanRules')
+      this.applyRules(this.rules['cleanRules'])
     } else {
-      this.removeRules('cleanRules')
+      this.removeRules(this.rules['cleanRules'])
     }
+
+    RuleManager.setRules(this.domain, this.rules)
     chrome.runtime.sendMessage({ 'type': 'setConfig', 'config': this.rules})
   },
 
   switchReadMode: function switchReadMode() {
-    this.rules.cleanReadOn = !this.rules.cleanReadOn
-    if (this.rules.cleanReadOn) {
-      this.applyRules('readRules')
+    this.rules.readModeOn = !this.rules.readModeOn
+    if (this.rules.readModeOn) {
+      this.applyRules(this.rules['readRules'])
     } else {
-      this.removeRules('readRules')
+      this.removeRules(this.rules['readRules'])
     }
     chrome.runtime.sendMessage({ 'type': 'setConfig', 'config': this.rules})
   },
 
-  applyRules: function applyRules(scope) {
-    Object.keys(this.rules[scope]).forEach(key => {
-      let rule = this.rules[scope][key]
-      if (rule.operation === 'delete') {
-        rule.defaultStyle = rule.element.style.display
-        rule.element.style.display = 'none'
-      } else {
-        rule.defaultStyle = rule.element.style.visibility
-        rule.element.style.visibility = 'hidden'
+  applyRules: function applyRules(rules) {
+    Object.keys(rules).forEach(key => {
+      let rule = rules[key]
+      if (rule.hasOwnProperty('element') && rule['element'] !== null && rule['element'] !== undefined)
+      {
+        if (rule.operation === 'Delete') {
+          rule.defaultStyle = rule.element.style.display
+          rule.element.style.display = 'none'
+        } else {
+          rule.defaultStyle = rule.element.style.visibility
+          rule.element.style.visibility = 'hidden'
+        }
       }
     })
   },
 
-  removeRules: function removeRules(scope) {
-    Object.keys(this.rules[scope]).forEach(key => {
-      let rule = this.rules[scope][key]
-      if (rule.operation === 'delete') {
-        rule.element.style.display = rule.defaultStyle
-      } else {
-        rule.element.style.visibility = rule.defaultStyle
+  removeRules: function removeRules(rules) {
+    Object.keys(rules).forEach(key => {
+      let rule = rules[key]
+      if (rule.hasOwnProperty('element') && rule['element'] !== null && rule['element'] !== undefined) {
+        if (rule.operation === 'Delete') {
+          rule.element.style.display = rule.defaultStyle
+        } else {
+          rule.element.style.visibility = rule.defaultStyle
+        }
       }
     })
   },
 
-}.initRules()
+  addNewRule: function saveNewRule(ruleType, rule) {
+    let id = Math.max.apply(this, Object.keys(this.rules[ruleType]))
+    id = (id < 0) ? 0 : id+1
+    console.log('ID: ' + id)
+
+    this.rules[ruleType][id] = rule
+    this.rules[ruleType][id].element = ObjectMaster.findElement(rule.obj)
+
+    let modeTypeOn = (ruleType === 'cleanRules') ? 'cleanModeOn' : 'readModeOn'
+
+    if (this.rules[modeTypeOn]) {
+      let tmp = {}
+      tmp[id] = this.rules[ruleType][id]
+      this.applyRules(tmp)
+    }
+
+    RuleManager.setRules(this.domain, this.rules)
+  },
+
+  deleteRule: function deleteRule(type, id) {
+    if (type === 'cleanRules') {
+      if (this.rules.cleanRules.hasOwnProperty(id)) {
+        let rule = {}
+        rule[id] = this.rules.cleanRules[id]
+        this.removeRules(rule)
+        delete this.rules.cleanRules[id]
+      }
+    }
+    else if(type === 'readRules') {
+      if (this.rules.readRules.hasOwnProperty(id)) {
+        let rule = {}
+        rule[id] = this.rules.readRules[id]
+        this.removeRules(rule)
+        delete this.rules.readRules[id]
+      }
+    } else {
+      return
+    }
+    // console.log(this.rules)
+    RuleManager.setRules(this.domain, this.rules)
+    chrome.runtime.sendMessage({ 'type': 'setConfig', 'config': this.rules})
+  },
+
+}
+
+domManipulator.initRules()
 
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   switch(message.type) {
     case "hideNewElement":
-      DomProbe.startProbing()
+      DomProbe.startProbing(message.ruleType)
       sendResponse()
       break
   }
 })
+
+export function passRule(ruleType, rule) {
+  console.log('Coming: ' + ruleType)
+  domManipulator.addNewRule(ruleType, rule)
+}

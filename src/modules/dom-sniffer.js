@@ -1,11 +1,18 @@
 'use strict'
 
+import XObjMaster from './xobj-master'
+import { passRule } from '../content'
+
+
 const domProbe = {
   selectionMenu: undefined,
   lastSelected: undefined,
+  selected: { 'node': undefined, 'xpath': '' },
   originalEventActions: {},
+  newRuleType: undefined,
 
-  startProbing: function startElemSelection() {
+  startProbing: function startProbing(ruleType) {
+    this.newRuleType = ruleType
     this.saveOriginalActions()
     this.showSelectionMenu()
     this.redirectEvents(true)
@@ -58,23 +65,38 @@ const domProbe = {
         event.preventDefault()
       }
       document.onmouseup = (event) => {
-        let elem = event.target
         event.stopPropagation()
         event.preventDefault()
 
+        let target = event.target
+        this.selected.xpath = 'HTML/' + XObjMaster.getXPathTo(target)
+        this.selected.node  = XObjMaster.getElementNode(this.selected.xpath)
+
         this.drawBorders(false)
         this.catchMouseClick(false)
-        this.expandSelectionMenu(elem.tagName)
+        this.expandSelectionMenu()
       }
     } else {
+      document.onclick = this.originalEventActions.mouseClick
       document.onmouseup = this.originalEventActions.mouseUp
     }
   },
 
-  expandSelectionMenu: function expandSelectionMenu(elemType) {
-    this.selectionMenu.innerHTML += '<h5>Selected: ' + elemType + '</h5>'
+  expandSelectionMenu: function expandSelectionMenu() {
+    this.selectionMenu.innerHTML += '<input type="text" id="rule-name">'
+    this.selectionMenu.innerHTML += 'Keep space: <input type="checkbox" checked="false" id="keep-space">'
+    document.getElementById('keep-space').addEventListener('click', () => {
+      document.getElementById('rule-name').checked = !document.getElementById('rule-name').checked
+    })
+
     this.selectionMenu.innerHTML += '<button id="save-btn">Save</button>'
-    this.selectionMenu.style.height = '80px'
+    document.getElementById('save-btn').addEventListener('click', () => {
+      let name = document.getElementById('rule-name').value
+      let operation = (document.getElementById('keep-space').checked) ? 'Hide' : 'Delete'
+      this.saveRule(name, operation)
+    })
+    this.selectionMenu.style.height = '120px'
+    this.listenToEscapeKey(false)
   },
 
   listenToEscapeKey: function listenToEscape(active) {
@@ -100,10 +122,19 @@ const domProbe = {
     if (this.lastSelected !== undefined) {
       this.lastSelected.style.outline = this.lastSelected.originalOutline
     }
+  },
+
+  saveRule: function saveRule(name, operation) {
+    let rule = {
+      'name': name,
+      'operation': operation,
+      'obj': { 'xpath': this.selected.xpath }
+    }
+    console.log(rule)
+    passRule(this.newRuleType, rule)
+    this.removeSelectionMenu()
   }
 }
-
-// chrome.runtime.sendMessage(this.rules)
 
 
 export default domProbe

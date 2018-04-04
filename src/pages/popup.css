@@ -1,6 +1,6 @@
 html, body {
   width: 300px;
-  height: 500px;
+  height: 450px;
   text-align: center;
 }
 
@@ -13,4 +13,21 @@ button {
 #general-settings {
   margin-bottom: 20px;
   display: none;
+}
+
+#general-settings button {
+  margin-left: 40px;
+}
+
+li {
+  margin-bottom: 6px;
+}
+
+option {
+  display: inline;
+  color: blue;
+}
+
+option:hover {
+  cursor: pointer;
 }

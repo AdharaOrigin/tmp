@@ -5,17 +5,17 @@ import { parseUrl } from './modules/utils'
 
 chrome.runtime.onInstalled.addListener((details) => {
   if (details.reason === 'install' || details.reason === 'update') {
+    console.log("Update Storage!!!")
     RuleManager.initStorage()
   }
 })
-
+// RuleManager.initStorage()
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   switch (message.type) {
     case 'getPageRules':
       let domain = parseUrl(message.url).domain
       RuleManager.getRules(domain).then(domainRules => {
-        console.log(domainRules)
         sendResponse(domainRules)
       })
       break
