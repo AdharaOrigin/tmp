@@ -89,13 +89,17 @@ const domProbe = {
       document.getElementById('rule-name').checked = !document.getElementById('rule-name').checked
     })
 
+    this.selectionMenu.innerHTML += '<br><button id="expand-selection"> + </button>'
+    this.selectionMenu.innerHTML += '<button id="expand-selection"> - </button><br>'
+
     this.selectionMenu.innerHTML += '<button id="save-btn">Save</button>'
     document.getElementById('save-btn').addEventListener('click', () => {
       let name = document.getElementById('rule-name').value
       let operation = (document.getElementById('keep-space').checked) ? 'Hide' : 'Delete'
       this.saveRule(name, operation)
     })
-    this.selectionMenu.style.height = '120px'
+
+    this.selectionMenu.style.height = '160px'
     this.listenToEscapeKey(false)
   },
 

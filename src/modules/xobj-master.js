@@ -11,8 +11,10 @@ const ObjectMaster = {
   },
 
   getXPathTo: function getXPathTo(element) {
-    // if (element.id!=='')
-    //   return 'id("'+element.id+'")';
+    if (element.id!=='') {
+      return 'id("'+element.id+'")';
+    }
+
     if (element===document.body) {
       return element.tagName;
     }

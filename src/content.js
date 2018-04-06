@@ -168,7 +168,6 @@ const domManipulator = {
     } else {
       return
     }
-    // console.log(this.rules)
     RuleManager.setRules(this.domain, this.rules)
     chrome.runtime.sendMessage({ 'type': 'setConfig', 'config': this.rules})
   },
