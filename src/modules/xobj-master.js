@@ -7,16 +7,47 @@ const ObjectMaster = {
   },
 
   getElementNode: function getXpath(xpath) {
-    return document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue
+    let htmlElem = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue.parentElement
+
+    let ix = 0
+    let children = htmlElem.children
+    let lastXPathElem = xpath.split('/')
+    lastXPathElem = lastXPathElem[lastXPathElem.length - 1]
+
+    console.log(lastXPathElem)
+
+    if (lastXPathElem.indexOf("*[@id=") >= 0) {
+      let id = lastXPathElem.slice(7, -2)
+      console.log('search id: ' + id)
+      for (let i= 0; i<children.length; i++) {
+        if (children[i].id === id)
+          return children[i]
+      }
+    }
+    else {
+      lastXPathElem = lastXPathElem.slice(0, -1).split('[')
+      let elemType = lastXPathElem[0]
+      let elemIndex = parseInt(lastXPathElem[1])
+
+      for (let i= 0; i<children.length; i++) {
+        if (children[i].tagName === elemType) {
+          ix = ix + 1
+          if (ix === elemIndex)
+            return children[i]
+        }
+      }
+    }
+
+    return undefined
   },
 
   getXPathTo: function getXPathTo(element) {
-    if (element.id!=='') {
-      return 'id("'+element.id+'")';
+    if (element.id !== '') {
+      return '//*[@id="' + element.id + '"]'
     }
 
     if (element===document.body) {
-      return element.tagName;
+      return '//' + element.tagName;
     }
 
     let ix= 0;

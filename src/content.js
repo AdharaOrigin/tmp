@@ -133,7 +133,6 @@ const domManipulator = {
   addNewRule: function saveNewRule(ruleType, rule) {
     let id = Math.max.apply(this, Object.keys(this.rules[ruleType]))
     id = (id < 0) ? 0 : id+1
-    console.log('ID: ' + id)
 
     this.rules[ruleType][id] = rule
     this.rules[ruleType][id].element = ObjectMaster.findElement(rule.obj)

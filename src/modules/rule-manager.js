@@ -45,8 +45,6 @@ const RuleManager = {
   },
 
   setRules: function setRule(domain, rule) {
-    console.log(domain)
-    console.log(rule)
     let input = {}
     input[domain] = JSON.stringify(rule)
     chrome.storage.local.set(input)
