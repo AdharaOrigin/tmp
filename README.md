@@ -1,7 +1,8 @@
-# Purify
+<div align="right">
+[![Build Status](https://travis-ci.org/AdharaOrigin/tmp.svg?branch=master)](https://travis-ci.org/AdharaOrigin/tmp)
+</div>
 
-Extension is for now available only in developer mode. [![Build Status](https://travis-ci.org/AdharaOrigin/tmp
-.svg?branch=master)](https://travis-ci.org/AdharaOrigin/tmp)
+# Purify Extension
 
 Purify is Chrome extension that allows you to hide unnecessary, irrelevant or annoying parts of your favourite 
 websites. You can **get rid off: ads, cookie notices, banners, footers,** and all other content you are not 
@@ -33,7 +34,7 @@ mode and load `dist` directory by clicking `Load unpacked extension...`
 
 ### Usage
 
-Just do it!
+<img src="https://user-images.githubusercontent.com/32511776/38954082-08292616-4351-11e8-8847-5b889555d148.jpg" width="23%"></img> <img src="https://user-images.githubusercontent.com/32511776/38954083-0851b644-4351-11e8-8aab-789def44f88c.jpg" width="23%"></img> <img src="https://user-images.githubusercontent.com/32511776/38954085-089d22aa-4351-11e8-8f0d-d90f8b2cfeb7.jpg" width="23%"></img> 
 
 
 ### Known Problems
