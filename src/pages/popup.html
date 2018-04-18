@@ -1,44 +1,65 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
   <meta charset="UTF-8">
   <title>Purify</title>
-  <link rel="stylesheet" type="text/css" href="popup.css">
+  <link rel="stylesheet" href="../skeleton-css/normalize.css">
+  <link rel="stylesheet" href="../skeleton-css/skeleton.css">
+  <link rel="stylesheet" href="popup.css">
+
   <script type="text/javascript" src="popup.js"></script>
 </head>
 <body>
-  <h2 id="title">Purify</h2>
 
-  <div id="loading-screen">
-    <h3>Loading page rules...</h3>
-    <p id="tmp"></p>
+<h1 id="title">Purify</h1>
+<hr>
+
+<div id="loading-screen">
+  <h3>Loading page rules!</h3>
+  <p id="tmp"></p>
+</div>
+
+<div id="general-settings" >
+  <div class="switch-on-off noselect">
+    <label>
+      <div>
+        <h4>Clean mode</h4>
+      </div>
+      <div class="switch">
+        <input type="checkbox" id="clean-mode-btn">
+        <span class="slider"></span>
+        <h5 class="off">Off</h5>
+        <h5 class="on">On</h5>
+      </div>
+    </label>
   </div>
 
+  <div class="switch-on-off noselect">
+    <label>
+      <div>
+        <h4>&nbsp;&nbsp;Read mode</h4>
+      </div>
+      <div class="switch">
+        <input type="checkbox" id="read-mode-btn">
+        <span class="slider"></span>
+        <h5 class="off">Off</h5>
+        <h5 class="on">On</h5>
+      </div>
+    </label>
+  </div>
+  <hr>
 
-  <div id="general-settings" >
-    <h4 id="domain">Domain: </h4>
-    <h4 id="url">URL: </h4>
+  <div id="rule-list">
+    <h4>CleanUp rules:  </h4>
+    <div id="clean-rules-list"></div>
+    <button class="add-rule" id="add-clean-rule-btn">Add CleanUp rule</button>
 
-    <button id="ext-action-btn">Extension ON</button>
-    <button id="clean-mode-btn">Clean Mode</button>
-    <button id="read-mode-btn">Read Mode</button>
-    <br>
-
-    <h4>CleanUp rules:</h4>
-    <p id="clean-rules-list">
-      No rules for this page.
-    </p>
-    <button id="add-clean-rule-btn">Add CleanUp rule</button>
-
-    <br><hr>
-
+    <br><br>
     <h4>Read mode rules:</h4>
-    <p id="read-rules-list">
-      No rules for this page.
-    </p>
-    <button id="add-read-rule-btn">Add ReadMode rule</button>
-
+    <div id="read-rules-list"></div>
+    <button class="add-rule" id="add-read-rule-btn">Add ReadMode rule</button>
   </div>
+</div>
 
 </body>
 </html>

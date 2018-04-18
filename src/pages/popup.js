@@ -1,7 +1,5 @@
 'use strict'
 
-import { parseUrl } from '../modules/utils'
-
 chrome.runtime.onMessage.addListener(message => {
   if (message.type === "setConfig") {
     configUpdate(message.config)
@@ -11,35 +9,38 @@ sendMessage({type: "getConfig"})
 
 
 function configUpdate(config) {
-  getCurrentTab().then(tab => {
-    let urlInfo = parseUrl(tab.url)
-    document.getElementById('domain').innerHTML = "Domain: " + urlInfo.domain
-    document.getElementById('url').innerHTML = urlInfo.page
-  })
-  document.getElementById('clean-mode-btn').innerHTML = 'Clean Mode ' + (config.cleanModeOn ? 'ON' : 'OFF')
-  document.getElementById('read-mode-btn').innerHTML = 'Read Mode ' + (config.readModeOn ? 'ON' : 'OFF')
 
-  document.getElementById('clean-rules-list').innerHTML = ''
+  document.getElementById('clean-mode-btn').checked = config.cleanModeOn
+  document.getElementById('read-mode-btn').checked  = config.readModeOn
+
+  let rulesHtml = ''
   Object.keys(config.cleanRules).forEach(key => {
     let rule = config.cleanRules[key]
-    let ruleHtml = '<li>' + key + ': ' + rule['operation'] + ' ' + rule['name'] +
-      ' [<option value="'+key+'" class="deleteClean">delete</option>]</li>'
-    document.getElementById('clean-rules-list').innerHTML += ruleHtml
+    rulesHtml += generateRuleHtml('deleteClean', key, rule['operation'], rule['name'], rule['obj']['xpath'])
   })
+  if (rulesHtml === '') {
+    rulesHtml = '<div class="rule"><div class="noRules"><h6>No ReadMode rules for this domain.</h6></div></div>'
+  }
+  document.getElementById('clean-rules-list').innerHTML = rulesHtml
 
-  document.getElementById('read-rules-list').innerHTML = ''
+  rulesHtml = ''
   Object.keys(config.readRules).forEach(key => {
     let rule = config.readRules[key]
-    let ruleHtml = '<li>' + key + ': ' + rule['operation'] + ' ' + rule['name'] +
-      ' [<option value="'+key+'" class="deleteRead">delete</option>]</li>'
-    document.getElementById('read-rules-list').innerHTML += ruleHtml
+    rulesHtml += generateRuleHtml('deleteRead', key, rule['operation'], rule['name'], rule['obj']['xpath'])
   })
+  if (rulesHtml === '') {
+    rulesHtml = '<div class="rule"><div class="noRules"><h6>No ReadMode rules for this domain.</h6></div></div>'
+  }
+  document.getElementById('read-rules-list').innerHTML = rulesHtml
+
 
   Array.from(document.getElementsByClassName('deleteClean')).forEach(function(elem) {
-    elem.addEventListener('click', function() { deleteRule('cleanRules', this.value) })
+    let key = elem.id.split('-')[1]
+    elem.addEventListener('click', function() { deleteRule('cleanRules', parseInt(key)) })
   })
   Array.from(document.getElementsByClassName('deleteRead')).forEach(function(elem) {
-    elem.addEventListener('click', function() { deleteRule('readRules', this.value) })
+    let key = elem.id.split('-')[1]
+    elem.addEventListener('click', function() { deleteRule('readRules', parseInt(key)) })
   })
 
   displayPanel()
@@ -69,8 +70,6 @@ function getCurrentTab() {
   })
 }
 
-
-
 document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('clean-mode-btn').addEventListener('click', switchCleanMode)
   document.getElementById('read-mode-btn').addEventListener('click', switchReadMode)
@@ -91,4 +90,19 @@ function hideNewElement(ruleType) {
   sendMessage({'type': 'hideNewElement', 'ruleType': ruleType }, () => {
     window.close()
   })
+}
+
+function generateRuleHtml(type, key, action, name, xpath) {
+  return '<div class="rule">' +
+    '<div>' +
+    '<h6>'+key+':</h6>' +
+    '</div>' +
+    '<div>' +
+    '<h6>'+action+' '+name+'</h6>' +
+    '<h6>'+xpath+'</h6>' +
+    '</div>' +
+    '<div>' +
+    '<img src="../icon/delete.png" class="'+type+'" id='+type+'-'+key+'>' +
+    '</div>' +
+    '</div>'
 }

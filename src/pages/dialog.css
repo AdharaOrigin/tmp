@@ -1,0 +1,106 @@
+body {
+  text-align: center;
+  background-color: transparent;
+  pointer-events: none;
+}
+
+#selection {
+  display: none;
+  background-color: white;
+  width: 170px;
+  height: 37px;
+  border: 1px solid gray;
+  border-radius: 4px;
+  opacity: .8;
+}
+
+#selection h4 {
+  opacity: 1;
+}
+
+#adjustment {
+  display: none;
+  margin: 10px;
+  width: 170px;
+  height: 210px;
+  background-color: white;
+  border-radius: 4px;
+  text-align: center;
+}
+
+#adjustment input {
+  width: 140px;
+}
+
+#adjustment button {
+  font-size: 16px;
+  line-height: 22px;
+  font-weight: normal;
+  padding: 0;
+  width: 60px;
+  height: 30px;
+}
+
+h4 {
+  color: #555;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 38px;
+  letter-spacing: .1rem;
+  text-transform: uppercase;
+  text-decoration: none;
+  white-space: nowrap;
+  margin-bottom: 0 !important;
+}
+
+.button-like {
+  height: 45px;
+  color: #555;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 38px;
+  letter-spacing: .1rem;
+  text-transform: uppercase;
+  text-decoration: none;
+  white-space: nowrap;
+  background-color: transparent;
+  margin-left: 10px;
+}
+
+
+label {
+  margin: 0 0 0 15px;
+  padding: 0;
+  position: relative;
+  top: -10px;
+  left: 0;
+  width: 138px;
+  height: 38px;
+  text-align: left;
+}
+
+hr {
+  margin: 0;
+}
+
+#space:hover {
+  cursor: pointer !important;
+}
+
+#keep-space {
+  width: 25px;
+  height: 25px;
+  position: absolute;
+  top: 7px;
+  left: 50px;
+}
+
+#save-btn {
+  width: 140px !important;
+  position: relative;
+  top: -5px;
+  left: 0;
+  background-color: gray;
+  color: white;
+}

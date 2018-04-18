@@ -5,6 +5,7 @@ import { passRule } from '../content'
 
 
 const domProbe = {
+  probing: true,
   newRuleType: undefined,
   targetElement: {
     element: undefined,
@@ -14,15 +15,11 @@ const domProbe = {
       this.removeOutline()
       this.xpath = XObjMaster.getXPathTo(elem)
       this.element = XObjMaster.getElementNode(this.xpath)
-      console.log(this.xpath)
-      console.log(this.element)
       this.drawOutline()
     },
 
-    drawOutline: function addOutline() {
+    drawOutline: function drawOutline() {
       if (this.element !== undefined) {
-        // this.origOutline = this.element.style.outline
-        // this.element.style.outline = '1px solid black'
         let domRect = this.element.getBoundingClientRect();
         this.overlay.style.width = domRect.width + 'px'
         this.overlay.style.height = domRect.height + 'px'
@@ -31,8 +28,6 @@ const domProbe = {
       }
     },
     removeOutline: function removeOutline() {
-      // if (this.element !== undefined)
-      //   this.element.style.outline = this.origOutline
       this.overlay.style.width = '0px'
       this.overlay.style.height = '0px'
       this.overlay.style.top = '0px'
@@ -51,48 +46,53 @@ const domProbe = {
   origEventActions: {},
 
   startProbing: function startProbing(ruleType) {
+    this.probing = true
     this.newRuleType = ruleType
     this.saveOrigActions()
     this.setSelectMode()
 
     this.targetElement.overlay = document.createElement('div')
     this.targetElement.overlay.id = 'purify-overlay'
-    this.targetElement.overlay.style.position = 'absolute'
+    this.targetElement.overlay.style.position = 'fixed'
     this.targetElement.overlay.style.backgroundColor = 'rgba(150, 0, 0, .5)'
     this.targetElement.overlay.style.border = '1px solid rgba(255, 255, 255, .5)'
     this.targetElement.overlay.style.pointerEvents = 'none'
+    this.targetElement.overlay.style.zIndex = '9999'
+
+    document.addEventListener('scroll', drawOutline)
     document.body.appendChild(this.targetElement.overlay)
     document.body.style.cursor = 'pointer'
   },
 
   setSelectMode: function setSelectState() {
+    this.cancelProbeByEsc()
+    this.saveHoveredElement()
+    this.clickSetsAdjustMode()
+
     document.onclick = (event) => {
       event.stopPropagation()
       event.preventDefault()
     }
-    this.cancelProbeByEsc()
-    this.saveHoveredElement()
-    this.clickSetsAdjustMode()
-    this.showSelectionMenu()
   },
 
   setAdjustMode: function setAdjustState() {
     document.onmouseover = this.origEventActions.mouseOver
+    /* document.onclick = this.origEventActions.mouseClick */
     document.onmouseup = this.origEventActions.mouseUp
-    document.onclick = this.origEventActions.mouseClick
     document.body.style.cursor = 'auto'
     this.expandSelectionMenu()
-    // this.clickSetsSelectMode()
   },
 
   stopProbing: function setDefaultState() {
+    this.probing = false
+    document.removeEventListener('scroll', drawOutline)
     document.onkeydown = this.origEventActions.keyDown
     document.onmouseover = this.origEventActions.mouseOver
     document.onmouseup = this.origEventActions.mouseUp
     document.onclick = this.origEventActions.mouseClick
     document.body.style.cursor = 'auto'
+    document.getElementById('purifyExtIframeContainer').style.pointerEvents = 'none'
     this.targetElement.removeOutline()
-    this.removeSelectionMenu()
   },
 
   saveOrigActions: function saveOrigActions() {
@@ -105,6 +105,7 @@ const domProbe = {
   cancelProbeByEsc: function listenToEscape() {
     document.onkeydown = (event) => {
       if (event.key === 'Escape' || event.key === 'Esc') {
+        chrome.runtime.sendMessage({ 'iframe-type': 'stop' })
         this.stopProbing()
       }
     }
@@ -116,60 +117,25 @@ const domProbe = {
     }
   },
 
-  clickSetsAdjustMode: function catchMouseClick() {
+  clickSetsAdjustMode: function clickSetsAdjustMode() {
     document.onmouseup = (event) => {
-      event.preventDefault()
       event.stopPropagation()
+      event.preventDefault()
       this.setAdjustMode()
     }
   },
 
-  clickSetsSelectMode: function clickSetsAdjustMode() {
+  clickSetsSelectMode: function clickSetsSelectMode() {
     document.onmouseup = (event) => {
-      event.stopPropagation()
       event.preventDefault()
+      event.stopPropagation()
       this.setSelectMode()
     }
   },
 
-
-  showSelectionMenu: function showSelectionMenu() {
-    this.selectionMenu = document.createElement('div')
-    this.selectionMenu.innerHTML = '<h5>Select element</h5>'
-    this.selectionMenu.id = 'sniffmenu'
-
-    document.body.appendChild(this.selectionMenu)
-  },
-
   expandSelectionMenu: function expandSelectionMenu() {
-    this.selectionMenu.innerHTML += '<input type="text" id="rule-name">'
-    this.selectionMenu.innerHTML += 'Keep space: <input type="checkbox" id="keep-space">'
-    this.selectionMenu.innerHTML += '<br>'
-    this.selectionMenu.innerHTML += '<button id="expsel"> + </button>'
-    this.selectionMenu.innerHTML += '<button id="shrsel"> - </button>'
-    this.selectionMenu.innerHTML += '<br>'
-    this.selectionMenu.innerHTML += '<button id="save-btn">Save</button>'
-
-    document.getElementById('expsel').addEventListener('click', () => {
-      this.targetElement.expandSelection()
-    })
-
-    document.getElementById('shrsel').addEventListener('click', () => {
-      this.targetElement.shrinkSelection()
-    })
-
-    document.getElementById('save-btn').addEventListener('click', () => {
-      let name = document.getElementById('rule-name').value
-      let operation = (document.getElementById('keep-space').checked) ? 'Hide' : 'Delete'
-      this.saveRule(name, operation)
-    })
-
-    this.selectionMenu.style.height = '160px'
-    this.cancelProbeByEsc(false)
-  },
-
-  removeSelectionMenu: function removeSelectionMenu() {
-    this.selectionMenu.parentNode.removeChild(this.selectionMenu);
+    document.getElementById('purifyExtIframeContainer').style.pointerEvents = 'auto'
+    chrome.runtime.sendMessage({ 'iframe-type': 'expandSelectionMenu' }) // 'type': 'iframeMsg',
   },
 
   saveRule: function saveRule(name, operation) {
@@ -182,6 +148,32 @@ const domProbe = {
     passRule(this.newRuleType, rule)
   }
 }
+
+function drawOutline() {
+  domProbe.targetElement.drawOutline()
+}
+
+chrome.runtime.onMessage.addListener((message) => {
+  if (message.type === "domSniffMsg" && domProbe.probing) {
+    switch(message['iframe-type']) {
+      case "expand":
+        domProbe.targetElement.expandSelection()
+        break
+
+      case "shrink":
+        domProbe.targetElement.shrinkSelection()
+        break
+
+      case "save-rule":
+        domProbe.saveRule(message.name, message.operation)
+        break
+
+      case "stop":
+        domProbe.stopProbing()
+        break
+    }
+  }
+})
 
 
 export default domProbe

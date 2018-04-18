@@ -5,6 +5,7 @@ import DomProbe from './modules/dom-sniffer'
 import RuleManager from './modules/rule-manager'
 import { parseUrl } from './modules/utils'
 
+
 function loadRules() {
   return new Promise(resolve => {
     chrome.runtime.sendMessage({type: 'getPageRules', url: location.href}, rules => {
@@ -41,6 +42,8 @@ const domManipulator = {
     await domLoaded
     this.findHtmlElements(this.rules['cleanRules'])
     this.findHtmlElements(this.rules['readRules'])
+
+    addIframe()
 
     if (this.rules.cleanModeOn)
       this.applyRules(this.rules['cleanRules'])
@@ -108,7 +111,8 @@ const domManipulator = {
       {
         if (rule.operation === 'Delete') {
           rule.defaultStyle = rule.element.style.display
-          rule.element.style.display = 'none'
+          // rule.element.style.display = 'none'
+          rule.element.setAttribute('style', 'display:none !important')
         } else {
           rule.defaultStyle = rule.element.style.visibility
           rule.element.style.visibility = 'hidden'
@@ -170,9 +174,7 @@ const domManipulator = {
     RuleManager.setRules(this.domain, this.rules)
     chrome.runtime.sendMessage({ 'type': 'setConfig', 'config': this.rules})
   },
-
 }
-
 domManipulator.initRules()
 
 
@@ -180,12 +182,27 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   switch(message.type) {
     case "hideNewElement":
       DomProbe.startProbing(message.ruleType)
+      chrome.runtime.sendMessage({ 'type': 'iframeMsg', 'iframe-type': 'start' })
       sendResponse()
       break
   }
 })
 
 export function passRule(ruleType, rule) {
-  console.log('Coming: ' + ruleType)
   domManipulator.addNewRule(ruleType, rule)
 }
+
+function addIframe() {
+  let dialogUrl = chrome.runtime.getURL("pages/dialog.html")
+  let iframeContainer = document.createElement('div')
+  iframeContainer.innerHTML = '<iframe src="' + dialogUrl + '" scrolling="no" frameborder="0"  height="220"' +
+    ' width="180"></iframe>'
+  iframeContainer.id = 'purifyExtIframeContainer'
+  iframeContainer.style.pointerEvents = 'none'
+  iframeContainer.style.position = 'fixed'
+  iframeContainer.style.top = '5px'
+  iframeContainer.style.right = '10px'
+  iframeContainer.style.zIndex = '99999'
+  document.body.appendChild(iframeContainer)
+}
+//

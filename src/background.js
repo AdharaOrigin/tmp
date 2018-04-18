@@ -19,6 +19,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         sendResponse(domainRules)
       })
       break
+
+    case 'iframeMsg':
+      chrome.tabs.sendMessage(sender.tab.id, message)
+      break
   }
 
   return true

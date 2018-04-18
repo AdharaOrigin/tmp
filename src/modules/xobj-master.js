@@ -14,11 +14,8 @@ const ObjectMaster = {
     let lastXPathElem = xpath.split('/')
     lastXPathElem = lastXPathElem[lastXPathElem.length - 1]
 
-    console.log(lastXPathElem)
-
     if (lastXPathElem.indexOf("*[@id=") >= 0) {
       let id = lastXPathElem.slice(7, -2)
-      console.log('search id: ' + id)
       for (let i= 0; i<children.length; i++) {
         if (children[i].id === id)
           return children[i]
