@@ -5,7 +5,6 @@ import DomProbe from './modules/dom-sniffer'
 import RuleManager from './modules/rule-manager'
 import { parseUrl } from './modules/utils'
 
-
 function loadRules() {
   return new Promise(resolve => {
     chrome.runtime.sendMessage({type: 'getPageRules', url: location.href}, rules => {
