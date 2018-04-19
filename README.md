@@ -11,7 +11,7 @@
 </div>
 
 
-### Usage
+### Usage & Examples
 
 To hide certain element on a domain you simply click on the extension icon, "Add CleanUp/ReadMode rule" and then you 
 can select desired element. Optionally name what you are hiding or adjust the selection.
