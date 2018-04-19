@@ -1,17 +1,35 @@
-<p align="center">
-# Purify Extension <a href="https://travis-ci.org/AdharaOrigin/tmp"><img src="https://travis-ci.org/AdharaOrigin/tmp.svg?branch=master" alt="Build Status"></a>
-</p>
+<div align="center" width="75%">
+  <h1>Purify Extension</h1>
+  <a href="https://travis-ci.org/AdharaOrigin/tmp"><img src="https://travis-ci.org/AdharaOrigin/tmp.svg?branch=master" alt="Build Status"></a>
+  <a href="https://www.gnu.org/licenses/gpl-3.0.en.html"><img src="https://img.shields.io/badge/License-GPL%20v3-blue.svg" alt="GNU GPL v3 license"></a>
+  <br><br>  
+  
+  Purify is Chrome extension that allows you to hide unnecessary, irrelevant or annoying parts of your favourite websites.
+  
+  Enjoy ads free pages, distraction free reading, simplicity. (Especially helpful with small screens.)
+  <br><br>
+</div>
 
 
-Purify is Chrome extension that allows you to hide unnecessary, irrelevant or annoying parts of your favourite 
-websites. You can **get rid off: ads, cookie notices, banners, footers,** and all other content you are not 
-interested in.
+### Usage
 
-There are two modes available. CleanUp mode let you define rules you want to apply 99% of a time while Read mode 
-allows you to define additional rules for reading purposes. With Read mode you can hide things you still need (like 
-menu) but are unnecessary and distractive when reading long articles and so on.
+To hide certain element on a domain:
+1) Click on extension icon
+2) Click on Add CleanUp/ReadMode rule
+3) Select element you want to hide
+4) Save it!
 
-Enjoy simplicity: Just content!
+Optionally, you can name element you are hiding or adjust the selection.
+
+There are two modes available:
+- CleanUp mode let you define rules you want to apply 99% of a time.
+-Read mode allows you to define additional rules for reading purposes. With Read mode you can hide things you still 
+need (like menu) but are unnecessary and distractive when reading long articles and so on.
+
+
+Watch short video below to see how Purify can be used.
+
+<img src="https://user-images.githubusercontent.com/32511776/38954082-08292616-4351-11e8-8847-5b889555d148.jpg" width="50%"></img>
 
 
 ### Build and Installation
@@ -28,12 +46,7 @@ This will generate extension files into `dist` directory.
 
 Chrome policy does not allow installation of extensions 
 that are not registered in Chrome Store unless Developer mode activated. Go to `chrome://extensions`, activate dev 
-mode and load `dist` directory by clicking `Load unpacked extension...` 
-
-
-### Usage
-
-<img src="https://user-images.githubusercontent.com/32511776/38954082-08292616-4351-11e8-8847-5b889555d148.jpg" width="23%"></img> <img src="https://user-images.githubusercontent.com/32511776/38954083-0851b644-4351-11e8-8aab-789def44f88c.jpg" width="23%"></img> <img src="https://user-images.githubusercontent.com/32511776/38954085-089d22aa-4351-11e8-8f0d-d90f8b2cfeb7.jpg" width="23%"></img> 
+mode and load `dist` directory by clicking `Load unpacked extension...`  
 
 
 ### Known Problems
