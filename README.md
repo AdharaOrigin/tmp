@@ -13,23 +13,19 @@
 
 ### Usage
 
-To hide certain element on a domain:
-1) Click on extension icon
-2) Click on Add CleanUp/ReadMode rule
-3) Select element you want to hide
-4) Save it!
-
-Optionally, you can name element you are hiding or adjust the selection.
-
-There are two modes available:
-- CleanUp mode let you define rules you want to apply 99% of a time.
--Read mode allows you to define additional rules for reading purposes. With Read mode you can hide things you still 
-need (like menu) but are unnecessary and distractive when reading long articles and so on.
+To hide certain element on a domain you simply click on the extension icon, "Add CleanUp/ReadMode rule" and then you 
+can select desired element. Optionally name what you are hiding or adjust the selection.
 
 
 Watch short video below to see how Purify can be used.
 
-<img src="https://user-images.githubusercontent.com/32511776/38954082-08292616-4351-11e8-8847-5b889555d148.jpg" width="50%"></img>
+[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/UusahdRIpsg/0.jpg)](https://www.youtube.com/watch?v=UusahdRIpsg)
+
+
+There are two modes available:
+- CleanUp mode let you define rules you want to apply 99% of a time.
+- Read mode allows you to define additional rules for reading purposes. With Read mode you can hide things you still 
+need (like menu) but are unnecessary and distractive when reading long articles and so on.
 
 
 ### Build and Installation
