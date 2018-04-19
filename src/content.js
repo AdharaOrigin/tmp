@@ -180,9 +180,16 @@ domManipulator.initRules()
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   switch(message.type) {
     case "hideNewElement":
+      if (message.ruleType === "readRules" && !domManipulator.rules.readModeOn) {
+        domManipulator.switchReadMode()
+      }
       DomProbe.startProbing(message.ruleType)
       chrome.runtime.sendMessage({ 'type': 'iframeMsg', 'iframe-type': 'start' })
       sendResponse()
+      break
+
+    case "interruptProbe":
+      DomProbe.stopProbing();
       break
   }
 })

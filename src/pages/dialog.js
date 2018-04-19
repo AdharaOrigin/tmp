@@ -4,6 +4,7 @@ chrome.runtime.onMessage.addListener((message) => {
   switch (message['iframe-type']) {
     case "start":
       probing = true
+      document.getElementById('rule-name').value = ''
       document.getElementById('selection').style.display = 'block'
       break
 

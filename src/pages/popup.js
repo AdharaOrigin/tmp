@@ -5,7 +5,8 @@ chrome.runtime.onMessage.addListener(message => {
     configUpdate(message.config)
   }
 })
-sendMessage({type: "getConfig"})
+sendMessage({ type: "interruptProbe" })
+sendMessage({ type: "getConfig" })
 
 
 function configUpdate(config) {
@@ -102,7 +103,7 @@ function generateRuleHtml(type, key, action, name, xpath) {
     '<h6>'+xpath+'</h6>' +
     '</div>' +
     '<div>' +
-    '<img src="../icon/delete.png" class="'+type+'" id='+type+'-'+key+'>' +
+    '<img src="../icons/delete.png" class="'+type+'" id='+type+'-'+key+'>' +
     '</div>' +
     '</div>'
 }

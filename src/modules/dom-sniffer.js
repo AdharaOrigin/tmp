@@ -84,7 +84,12 @@ const domProbe = {
   },
 
   stopProbing: function setDefaultState() {
+    if (!this.probing) {
+      return;
+    }
+
     this.probing = false
+    chrome.runtime.sendMessage({ 'iframe-type': 'stop' })
     document.removeEventListener('scroll', drawOutline)
     document.onkeydown = this.origEventActions.keyDown
     document.onmouseover = this.origEventActions.mouseOver
@@ -105,7 +110,6 @@ const domProbe = {
   cancelProbeByEsc: function listenToEscape() {
     document.onkeydown = (event) => {
       if (event.key === 'Escape' || event.key === 'Esc') {
-        chrome.runtime.sendMessage({ 'iframe-type': 'stop' })
         this.stopProbing()
       }
     }
